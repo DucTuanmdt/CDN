@@ -1,0 +1,18 @@
+.disable-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.cursor-pointer {
+    cursor: pointer !important;
+}
+
+.text-decoration-through {
+  text-decoration: line-through !important;
+}
+
+.bg-white {
+  background-color: white !important;
+}
