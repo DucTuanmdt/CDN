@@ -17,6 +17,12 @@
   background-color: white !important;
 }
 
+/* Page container */
+
+.page-container {
+  min-height: 60vh !important;
+}
+
 /* Carousel */
 .carousel-inner img {
   width: 100%;
