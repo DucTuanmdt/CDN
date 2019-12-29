@@ -94,6 +94,17 @@
   object-fit: contain;
 }
 
+/* Product detail */
+.quantity-input {
+  width: 60px !important;
+  padding-left: 12px !important;
+  padding-right: 0px !important;
+}
+
+.child-image {
+  height: 80px;
+  object-fit: contain;
+}
 /* need to fix: delete this css - Footer */
 section {
   padding: 60px 0;
