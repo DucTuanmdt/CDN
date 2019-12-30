@@ -33,14 +33,28 @@ var app = new Vue({
         }
     },
     methods: {
-        addToCart(_id) {
-            const product = {
-                _id: this.$refs.productId.value,
-                name: this.$refs.productName.value,
-                price: this.$refs.productPrice.value,
-                quantity: this.$refs.productQuantity.value,
-                thumbnail: this.$refs.productThumbnail.value
+        addToCart(originProduct) {
+            let product = {
+                _id: null
+            };
+            // add to cart by params (use in product page)
+            if (originProduct && originProduct._id && originProduct.price) { // ensura that originProduct is not event
+                product = originProduct;
+            } else {
+                // add to cart by ref, use in product detail page
+                try {
+                    product = {
+                        _id: this.$refs.productId.value,
+                        name: this.$refs.productName.value,
+                        price: this.$refs.productPrice.value,
+                        quantity: this.$refs.productQuantity.value,
+                        thumbnail: this.$refs.productThumbnail.value
+                    }
+                } catch (e) {
+                    console.log("Can not add to cart!", e)
+                }
             }
+
             try {
                 product.price = parseInt(product.price)
                 product.quantity = parseInt(product.quantity)
