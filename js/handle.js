@@ -5,20 +5,23 @@ var app = new Vue({
         order: {
             name: "",
             phone: "",
+            email: "",
             address: "",
             note: "",
             total: 0
         },
         orderResult: false,
         isCreatingOrder: false,
+        support: {},
     },
     computed: {
         enableOrder() {
-            return this.order.name && this.order.phone && this.order.address;
+            return this.order.name && this.order.phone && this.order.email && this.order.address;
         }
     },
     mounted() {
         this.initCart();
+        this.initSupport();
     },
     watch: {
         cartWebX: {
@@ -79,6 +82,14 @@ var app = new Vue({
         initCart() {
             this.cartWebX = JSON.parse(localStorage.getItem("cartWebX")) || [];
         },
+        initSupport() {
+            this.support = {
+                name: "",
+                phone: null,
+                email: "",
+                question: ""
+            };
+        },
         calculateCartTotal() {
             if (this.cartWebX && this.cartWebX.length) {
                 let total = 0;
@@ -131,6 +142,20 @@ var app = new Vue({
             }
             this.$refs.buttonModal.click();
             this.isCreatingOrder = false;
+        },
+        async submitQuestion() {
+            try {
+                const res = await axios.post("/api/support/create", this.support);
+                if (res.data.code == 200) {
+                    this.initSupport();
+                    console.log("RES", res);
+                    alert("Yêu cầu của bạn đã được gửi đi");
+                } else {
+                    console.log("Fail: ", res);
+                }
+            } catch (e) {
+                console.log("Error: ", e);
+            }
         }
     }
 })
