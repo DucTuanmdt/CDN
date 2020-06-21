@@ -21,3 +21,10 @@
   background-color: green !important;
 }
   
+
+
+/* CSS for GG map */
+#map {
+  min-height: 360px;
+  height: 100%;
+}

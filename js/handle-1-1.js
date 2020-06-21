@@ -13,6 +13,7 @@ var app = new Vue({
         orderResult: false,
         isCreatingOrder: false,
         support: {},
+        mapPlace: null,
     },
     computed: {
         enableOrder() {
@@ -22,6 +23,7 @@ var app = new Vue({
     mounted() {
         this.initCart();
         this.initSupport();
+        this.checkInitMap();
     },
     watch: {
         cartWebX: {
@@ -156,6 +158,34 @@ var app = new Vue({
             } catch (e) {
                 console.log("Error: ", e);
             }
+        },
+        checkInitMap() {
+            try {
+                this.mapPlace = JSON.parse(this.$refs.mapData.getAttribute("value"));
+                if (this.mapPlace) {
+                    this.initMap();
+                }
+            } catch (e) {
+                console.log("No Map", e)
+            }
+        },
+        initMap() {
+            if (!google) {
+                setTimeout(() => {
+                    this.initMap();
+                }, 3000)
+            }
+
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
+                center: this.mapPlace.geometry.location
+            });
+
+            var marker = new google.maps.Marker({
+                position: this.mapPlace.geometry.location,
+                map: map,
+                title: this.mapPlace.formatted_address
+            });
         }
     }
 })
