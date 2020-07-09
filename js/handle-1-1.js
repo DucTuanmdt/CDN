@@ -1,11 +1,17 @@
+const defaultOptions = {
+    position: "top-center",
+    duration: 4000,
+    singleton: true,
+};
+
+Vue.use(Toasted, defaultOptions);
+
 var app = new Vue({
     el: '#app',
     data: {
         cartWebX: [],
         order: {
-            name: "",
-            phone: "",
-            email: "",
+            user: "",
             address: "",
             note: "",
             total: 0
@@ -14,10 +20,15 @@ var app = new Vue({
         isCreatingOrder: false,
         support: {},
         mapPlace: null,
+        user: {
+            name: "",
+            phone: "",
+            email: "",
+        },
     },
     computed: {
         enableOrder() {
-            return this.order.name && this.order.phone && this.order.email && this.order.address;
+            return this.user && this.user._id && this.order.address;
         }
     },
     mounted() {
@@ -79,9 +90,16 @@ var app = new Vue({
             }
             console.log("CART: ", cartWebX)
             localStorage.setItem("cartWebX", JSON.stringify(cartWebX))
-            alert("Đã thêm vào giỏ hàng!")
+            this.$toasted.show(`Đã thêm vào giỏ hàng!`);
         },
         initCart() {
+            this.user = {
+                ...this.user,
+                ...this.getUserFromCookies()
+            };
+            if (this.user && this.user._id) {
+                this.order.user = this.user._id;
+            };
             this.cartWebX = JSON.parse(localStorage.getItem("cartWebX")) || [];
         },
         initSupport() {
@@ -151,7 +169,7 @@ var app = new Vue({
                 if (res.data.code == 200) {
                     this.initSupport();
                     console.log("RES", res);
-                    alert("Yêu cầu của bạn đã được gửi đi");
+                    this.$toasted.show(`Yêu cầu của bạn đã được gửi đi`);
                 } else {
                     console.log("Fail: ", res);
                 }
@@ -160,14 +178,17 @@ var app = new Vue({
             }
         },
         checkInitMap() {
-            try {
-                this.mapPlace = JSON.parse(this.$refs.mapData.getAttribute("value"));
-                if (this.mapPlace) {
-                    this.initMap();
+            if (this.$refs.mapData) {
+                try {
+                    this.mapPlace = JSON.parse(this.$refs.mapData.getAttribute("value"));
+                    if (this.mapPlace) {
+                        this.initMap();
+                    }
+                } catch (e) {
+                    console.log("No Map", e)
                 }
-            } catch (e) {
-                console.log("No Map", e)
             }
+
         },
         initMap() {
             if (!google) {
@@ -186,6 +207,16 @@ var app = new Vue({
                 map: map,
                 title: this.mapPlace.formatted_address
             });
-        }
+        },
+
+        getUserFromCookies() {
+            let user = null;
+            try {
+                user = JSON.parse(Cookies.get("user"));
+            } catch (e) {
+                console.error("Can not get user from cookies")
+            }
+            return user;
+        },
     }
 })
