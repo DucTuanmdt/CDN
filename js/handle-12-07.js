@@ -6,6 +6,10 @@ const defaultOptions = {
 
 Vue.use(Toasted, defaultOptions);
 
+var appHeader = new Vue({
+    el: "#app-header"
+})
+
 var app = new Vue({
     el: '#app',
     data: {
@@ -214,7 +218,7 @@ var app = new Vue({
             try {
                 user = JSON.parse(Cookies.get("user"));
             } catch (e) {
-                console.error("Can not get user from cookies")
+                console.error("Can not get user from cookies", e)
             }
             return user;
         },
