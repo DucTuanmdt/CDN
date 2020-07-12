@@ -7,7 +7,29 @@ const defaultOptions = {
 Vue.use(Toasted, defaultOptions);
 
 var appHeader = new Vue({
-    el: "#app-header"
+    el: '#app-header',
+    data: {
+        user: {}
+    },
+    mounted() {
+        this.user = this.getUserFromCookies();
+    },
+    methods: {
+        logout() {
+            Cookies.remove("user");
+            Cookies.remove("token");
+            location.href = "/login";
+        },
+        getUserFromCookies() {
+            let user = null;
+            try {
+                user = JSON.parse(Cookies.get("user"));
+            } catch (e) {
+                console.error("Can not get user from cookies", e)
+            }
+            return user;
+        },
+    }
 })
 
 var app = new Vue({
