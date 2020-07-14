@@ -16,14 +16,14 @@ var appHeader = new Vue({
     },
     methods: {
         logout() {
-            Cookies.remove("user");
-            Cookies.remove("token");
+            Cookies.remove("user_y");
+            Cookies.remove("token_y");
             location.href = "/login";
         },
         getUserFromCookies() {
             let user = null;
             try {
-                user = JSON.parse(Cookies.get("user"));
+                user = JSON.parse(Cookies.get("user_y"));
             } catch (e) {
                 console.error("Can not get user from cookies", e)
             }
@@ -238,7 +238,7 @@ var app = new Vue({
         getUserFromCookies() {
             let user = null;
             try {
-                user = JSON.parse(Cookies.get("user"));
+                user = JSON.parse(Cookies.get("user_y"));
             } catch (e) {
                 console.error("Can not get user from cookies", e)
             }
