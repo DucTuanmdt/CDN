@@ -51,16 +51,50 @@ var app = new Vue({
             phone: "",
             email: "",
         },
+        sortOption: [{
+                text: "Default",
+                value: ""
+            },
+            {
+                text: "Newest",
+                value: "-createdAt"
+            },
+            {
+                text: "Low price",
+                value: "price"
+            },
+            {
+                text: "High price",
+                value: "-price"
+            },
+        ],
+        typeSort: "",
+        searchKey: "",
+        pageIndex: 1,
+        pageTotal: 1,
+        totalItem: 0,
+        pageSize: 9,
     },
     computed: {
         enableOrder() {
             return this.user && this.user._id && this.order.address;
+        },
+        getCurrentTypeSortText() {
+            if (!this.typeSort)
+                return "Sort"
+
+            for (let item of this.sortOption) {
+                if (item.value == this.typeSort)
+                    return item.text;
+            }
         }
     },
     mounted() {
         this.initCart();
         this.initSupport();
         this.checkInitMap();
+        this.getDataFromQuery();
+        this.initPagination();
     },
     watch: {
         cartWebX: {
@@ -243,6 +277,52 @@ var app = new Vue({
                 console.error("Can not get user from cookies", e)
             }
             return user;
+        },
+
+        // product methods
+        changeTypeSort(type) {
+            if (this.typeSort != type) {
+                this.typeSort = type;
+                this.searchProduct();
+            }
+        },
+        changePageIndex(pageIndex) {
+            if (this.pageIndex != pageIndex) {
+                this.pageIndex = pageIndex;
+                this.searchProduct();
+            }
+        },
+        buildSearchUrl() {
+            const query = {
+                search: this.searchKey,
+                pageIndex: this.pageIndex,
+                sort: this.typeSort,
+            };
+            if (!this.searchKey)
+                delete query.search;
+            if (!this.pageIndex)
+                delete query.pageIndex;
+            if (!this.typeSort)
+                delete query.sort;
+
+            const params = new URLSearchParams(query);
+            return params.toString();
+        },
+        getDataFromQuery() {
+            const url = new URL(window.location.href);
+            const searchQuery = new URLSearchParams(url.search);
+            this.typeSort = searchQuery.get("sort") || "";
+            this.searchKey = searchQuery.get("search") || "";
+            this.pageIndex = searchQuery.get("pageIndex") || 1;
+        },
+        searchProduct() {
+            location.href = `/product?${this.buildSearchUrl()}`
+        },
+        initPagination() {
+            if (this.$refs.totalItem) {
+                this.totalItem = this.$refs.totalItem.getAttribute("value") || 0;
+            }
+            this.pageTotal = Math.ceil(this.totalItem / this.pageSize) || 1;
         },
     }
 })
