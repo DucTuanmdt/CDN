@@ -324,5 +324,10 @@ var app = new Vue({
             }
             this.pageTotal = Math.ceil(this.totalItem / this.pageSize) || 1;
         },
+        setThumbnailProduct(src) {
+            if (this.$refs.thumbnailImage) {
+              this.$refs.thumbnailImage.src = src
+            }
+          }
     }
 })
